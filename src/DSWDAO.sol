@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts@4.9.0/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts@4.9.0/access/Ownable.sol";
-import "@openzeppelin/contracts@4.9.0/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts@4.9.0/security/Pausable.sol";
-import "@openzeppelin/contracts@4.9.0/utils/math/SafeMath.sol";
+import {ERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
+import "openzeppelin-contracts/contracts/security/Pausable.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /**
  * @title DSWDAO - Secure Decentralized Governance Protocol
@@ -116,16 +116,13 @@ contract DSWDAO is ERC20, Ownable, ReentrancyGuard, Pausable {
         _transferOwnership(msg.sender);
         _pause();
         lastRewardUpdate = block.number;
-        _createSnapshot(); // Create initial snapshot
+        _createSnapshot();
     }
 
     // ============ SNAPSHOT SYSTEM ============
     function _createSnapshot() internal returns (uint256) {
-        currentSnapshotId = block.number; // Use block.number instead of timestamp for better consistency
+        currentSnapshotId = block.number;
         snapshotTotalSupply[currentSnapshotId] = totalSupply();
-        
-        // Initialize snapshot data for all holders
-        // This would be gas-intensive in production but necessary for testing
         emit SnapshotCreated(currentSnapshotId);
         return currentSnapshotId;
     }
@@ -170,7 +167,6 @@ contract DSWDAO is ERC20, Ownable, ReentrancyGuard, Pausable {
         totalStaked = totalStaked.add(amount);
         votingPower[user] = votingPower[user].add(amount);
 
-        // Update snapshot
         snapshotBalanceOf[currentSnapshotId][user] = balanceOf(user);
         snapshotVotingPower[currentSnapshotId][user] = votingPower[user];
 
@@ -194,7 +190,6 @@ contract DSWDAO is ERC20, Ownable, ReentrancyGuard, Pausable {
             userStake.exists = false;
         }
 
-        // Update snapshot
         snapshotBalanceOf[currentSnapshotId][user] = balanceOf(user);
         snapshotVotingPower[currentSnapshotId][user] = votingPower[user];
 
@@ -219,7 +214,6 @@ contract DSWDAO is ERC20, Ownable, ReentrancyGuard, Pausable {
         _mint(user, rewards);
         votingPower[user] = votingPower[user].add(rewards);
 
-        // Update snapshot
         snapshotBalanceOf[currentSnapshotId][user] = balanceOf(user);
         snapshotVotingPower[currentSnapshotId][user] = votingPower[user];
 
@@ -432,8 +426,7 @@ contract DSWDAO is ERC20, Ownable, ReentrancyGuard, Pausable {
         return success;
     }
 
-    // ============ SNAPSHOT INITIALIZATION ============
-    // Helper function to initialize snapshot data for testing
+    // Helper per testing
     function initializeSnapshotData(address[] calldata accounts) external onlyOwner {
         for (uint256 i = 0; i < accounts.length; i++) {
             snapshotBalanceOf[currentSnapshotId][accounts[i]] = balanceOf(accounts[i]);
