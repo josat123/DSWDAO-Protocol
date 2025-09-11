@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Run solhint
+echo "Running Solhint..."
+npx solhint contracts/**/*.sol
+
+# Run basic tests
+echo "Running quick tests..."
+npx hardhat test test/security/Reentrancy.test.js --no-compile
+
+# Check for console.log
+if grep -r "console.log" contracts/; then
+    echo "ERROR: console.log found in contracts!"
+    exit 1
+fi
+
+exit 0
