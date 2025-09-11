@@ -1,0 +1,10 @@
+# <type>: <subject>
+
+# <body>
+
+# <footer>
+
+# Types: feat, fix, docs, style, refactor, test, chore
+# Subject: max 50 chars
+# Body: optional, max 72 chars per line
+# Footer: optional, for issues references
